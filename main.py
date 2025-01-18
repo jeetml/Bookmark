@@ -2,10 +2,14 @@ import streamlit as st
 import os
 from google.cloud import firestore
 from datetime import datetime
+from google.oauth2 import service_account
+
+# Load Firebase credentials from Streamlit secrets
+firebase_credentials = st.secrets["firebase"]
 
 # Initialize Firebase
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credential.json"  # Set path to your Firebase credentials file
-db = firestore.Client()
+credentials = service_account.Credentials.from_service_account_info(firebase_credentials)
+db = firestore.Client(credentials=credentials, project=firebase_credentials["project_id"])
 
 # Function to insert a bookmark into Firestore
 def insert_bookmark(link, description, keywords, category):
